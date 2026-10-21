@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study part-1 post read</title>
+<style>
+:root{
+  --bg:#f5f4ef; --card:#fbfaf7; --ink:#12324a; --ink2:#41627a;
+  --sky:#5ab4e5; --sky-d:#1c6c9c; --sky-dd:#0e4468; --sky-l:#cfe8f7; --sky-xl:#e6f3fb;
+  --line:#c9dbe8; --code:#e8eef2; --r:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.7 Georgia,"Times New Roman",serif}
+h1,h2,h3,h4,nav,button,.ui,table,summary,.tag{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--sky-d)}
+:focus-visible{outline:3px solid var(--sky-d);outline-offset:2px;border-radius:4px}
+#bar{position:fixed;top:0;left:0;height:4px;background:var(--sky-d);width:0;z-index:60}
+nav{position:sticky;top:0;z-index:50;background:rgba(245,244,239,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav .in{max-width:1080px;margin:auto;padding:10px 20px;display:flex;gap:6px;overflow-x:auto;align-items:center}
+nav b{white-space:nowrap;color:var(--sky-dd);margin-right:10px;font-size:.95rem}
+nav a{white-space:nowrap;text-decoration:none;font-size:.82rem;padding:5px 10px;border-radius:99px;color:var(--ink2)}
+nav a:hover,nav a.on{background:var(--sky-l);color:var(--sky-dd)}
+.hero{background:linear-gradient(135deg,var(--sky-dd),var(--sky-d) 60%,var(--sky));color:#fff;padding:78px 20px 70px}
+.hero .in{max-width:900px;margin:auto}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.1;margin:0 0 14px;letter-spacing:-.02em}
+.hero p{font-size:1.15rem;max-width:700px;opacity:.95;margin:0}
+.tag{display:inline-block;background:rgba(255,255,255,.18);padding:4px 12px;border-radius:99px;font-size:.78rem;margin-bottom:18px;letter-spacing:.06em;text-transform:uppercase}
+main{max-width:860px;margin:auto;padding:20px}
+section{padding:44px 0 8px;scroll-margin-top:50px}
+.num{font:700 .8rem system-ui;color:var(--sky-d);letter-spacing:.12em;text-transform:uppercase}
+h2{font-size:clamp(1.6rem,3.2vw,2.15rem);line-height:1.2;margin:4px 0 16px;color:var(--sky-dd)}
+h3{font-size:1.2rem;margin:30px 0 8px;color:var(--sky-dd)}
+h4{margin:16px 0 4px;font-size:1rem}
+p{margin:0 0 14px}
+code{background:var(--code);padding:1px 6px;border-radius:5px;font:.88em ui-monospace,Menlo,Consolas,monospace}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;margin:18px 0}
+.story{background:var(--sky-xl);border-left:5px solid var(--sky-d)}
+.call{background:var(--sky-l);border-radius:var(--r);padding:14px 18px;margin:18px 0;font-family:system-ui,sans-serif;font-size:.97rem}
+.call b:first-child{color:var(--sky-dd)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));margin:18px 0}
+.grid .card{margin:0}
+.formula{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;text-align:center;font:1.08rem Georgia,serif;overflow-x:auto}
+.viz{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:20px 0;box-shadow:0 2px 10px rgba(28,108,156,.07)}
+.viz>.vt{font:700 .78rem system-ui;letter-spacing:.1em;text-transform:uppercase;color:var(--sky-d);margin-bottom:8px}
+.viz .note{font:.82rem system-ui;color:var(--ink2);margin:10px 0 0}
+button{font:600 .9rem system-ui;background:var(--sky-d);color:#fff;border:0;border-radius:9px;padding:9px 15px;cursor:pointer}
+button:hover{background:var(--sky-dd)}
+button.alt{background:var(--sky-l);color:var(--sky-dd)}
+button.alt:hover{background:var(--line)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tabs button{background:var(--sky-xl);color:var(--sky-dd)}
+.tabs button[aria-selected=true]{background:var(--sky-d);color:#fff}
+.panel[hidden]{display:none}
+details{border:1px solid var(--line);border-radius:10px;background:var(--card);margin:10px 0}
+summary{cursor:pointer;padding:11px 16px;font-weight:600;color:var(--sky-dd);font-size:.95rem}
+details[open]>summary{border-bottom:1px solid var(--line)}
+details>div{padding:12px 16px}
+pre{background:var(--code);border-radius:10px;padding:14px;overflow-x:auto;margin:10px 0;font:.8rem/1.55 ui-monospace,Menlo,Consolas,monospace;color:#10344c}
+pre.out{background:var(--sky-xl);border-left:4px solid var(--sky)}
+.tw{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:.88rem;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+th{background:var(--sky-l);color:var(--sky-dd)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.hl td{background:var(--sky-xl)}
+.bars{display:grid;gap:8px;font:.88rem system-ui}
+.brow{display:grid;grid-template-columns:210px 1fr 64px;gap:10px;align-items:center}
+.btrack{background:var(--sky-xl);border-radius:6px;height:22px;overflow:hidden}
+.bfill{height:100%;background:var(--sky-d);border-radius:6px;transition:width .5s}
+.bfill.b2{background:repeating-linear-gradient(45deg,var(--sky),var(--sky) 6px,#8cc9ee 6px,#8cc9ee 12px)}
+.bval{font-weight:700;text-align:right}
+@media(max-width:620px){.brow{grid-template-columns:120px 1fr 52px;font-size:.8rem}}
+input[type=range]{width:100%;accent-color:var(--sky-d)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.pill{display:inline-block;background:var(--sky-l);color:var(--sky-dd);padding:2px 10px;border-radius:99px;font:600 .82rem system-ui}
+.stat{font:700 1.5rem system-ui;color:var(--sky-dd)}
+.lab{font:.8rem system-ui;color:var(--ink2)}
+.quiz{background:#fff;border:2px solid var(--sky);border-radius:var(--r);padding:18px;margin:24px 0}
+.quiz .qh{font:700 .78rem system-ui;letter-spacing:.1em;text-transform:uppercase;color:var(--sky-d)}
+.quiz label{display:block;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;cursor:pointer;font:.95rem/1.5 system-ui}
+.quiz label:hover{background:var(--sky-xl)}
+.quiz input{margin-right:8px;accent-color:var(--sky-d)}
+.quiz .ok{border-color:var(--sky-d);background:var(--sky-l)}
+.quiz .no{border-style:dashed;opacity:.75}
+.quiz .fb{margin-top:10px;padding:12px 14px;border-radius:10px;background:var(--sky-xl);font:.93rem/1.6 system-ui}
+.prompt{background:var(--sky-xl);border:1px dashed var(--sky-d);border-radius:10px;padding:12px 16px;font:.92rem/1.6 system-ui;font-style:italic}
+svg text{font-family:system-ui,sans-serif}
+ul,ol{padding-left:22px}
+li{margin:5px 0}
+.chip{display:inline-block;border-radius:6px;padding:1px 8px;font:600 .78rem system-ui}
+.chip.ok{background:var(--sky-l);color:var(--sky-dd)}
+.chip.bad{background:var(--sky-dd);color:#fff}
+.seq{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.seq div{flex:1 1 70px;min-width:70px;text-align:center;border:2px solid var(--line);border-radius:10px;padding:8px 4px;font:.8rem system-ui;background:#fff}
+.seq div.used{background:var(--sky-l);border-color:var(--sky-d)}
+.seq div.cur{background:var(--sky-dd);color:#fff;border-color:var(--sky-dd)}
+.seq b{display:block;font-size:1.05rem}
+footer{background:var(--sky-dd);color:#fff;text-align:center;padding:34px 20px;margin-top:60px;font:600 1rem system-ui}
+footer small{display:block;font-weight:400;opacity:.75;margin-top:4px}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<nav aria-label="Sections"><div class="in" id="nav"><b>Case study part-1 post read</b></div></nav>
+
+<header class="hero"><div class="in">
+  <span class="tag">Post read · End-to-end machine learning</span>
+  <h1>Case study part-1 post read</h1>
+  <p>From business problem to a trustworthy baseline: framing the decision, auditing the data, splitting by time, and climbing the baseline ladder, told through SwiftBite's delivery promise.</p>
+</div></header>
+
+<main>
+
+<section id="story">
+  <div class="num">Opening story</div>
+  <h2>"Thirty minutes" is not a number</h2>
+  <div class="card story">
+    <p><b>SwiftBite</b> delivers food from about 400 restaurants across the city. When a customer places an order, the app shows a promise: <i>"Arriving in 30 minutes."</i></p>
+    <p>Ishita, who runs operations, opens Monday's review with two slides. <b>Slide 1:</b> nearly <b>one order in five</b> arrives more than 10 minutes after the promise. Those customers complain, ask for refunds, and some never order again. <b>Slide 2:</b> when the team made promises longer to be safe, conversions fell. Customers saw "55 minutes" and ordered from a competitor.</p>
+    <p>"Our promise is a rule someone wrote years ago. Distance times a number, plus a few extras. I want a <b>model</b> that gives every order a promise we can trust."</p>
+    <p>Kabir, who joined the data team a month ago, is asked to build it. Dev, the product manager, adds one condition: "Show me it works <i>before</i> we ship, and show me it will keep working <i>after</i>."</p>
+    <p>Kabir's first instinct is to open a notebook and fit a model. His mentor stops him: "The model is about 20% of this job. What decision is the prediction for? What does a mistake cost? What do you actually know at the moment the customer taps 'order'? And how will you prove it works on days you have not seen yet?"</p>
+  </div>
+  <p>In Part 1, Kabir turns a business worry into a well-posed ML problem, audits the data, and builds a trustworthy baseline. Part 2 stress-tests it, improves it, and faces the real world.</p>
+</section>
+
+<section id="frame">
+  <div class="num">Step 1</div>
+  <h2>Frame the problem</h2>
+  <div class="viz">
+    <div class="vt">Explorer · the framing questions</div>
+    <div class="tabs" role="tablist" data-tabs id="frameTabs"></div>
+    <div id="frameOut" class="card" style="margin:0"></div>
+  </div>
+
+  <h3>From cost to the right prediction</h3>
+  <p>We are not asked to guess the <i>average</i> delivery time. We are asked to choose a promise <i>p</i> for each order. If the actual time is <i>t</i>:</p>
+  <div class="formula">cost = 3 · max(<i>t</i> − <i>p</i>, 0) + 1 · max(<i>p</i> − <i>t</i>, 0)</div>
+  <p>Raise the promise by one minute: every order that <b>would have been late</b> now saves 3 units, and every order that <b>was already early</b> now costs 1 more unit. Break-even is when the share of late orders is 1/4. So the best promise is the value that <b>75% of orders beat</b>: the <b>75th percentile</b> of the delivery-time distribution <i>for that kind of order</i>.</p>
+  <div class="formula">τ = c<sub>late</sub> / (c<sub>late</sub> + c<sub>early</sub>) = 3 / (3 + 1) = 0.75</div>
+
+  <div class="viz">
+    <div class="vt">Interactive · how the cost ratio sets the target percentile</div>
+    <label for="rSl" class="ui" style="font:.9rem system-ui">One minute late costs <b id="rVal">3</b> × one minute early</label>
+    <input type="range" id="rSl" min="1" max="10" step="1" value="3">
+    <div class="grid" style="margin-top:12px">
+      <div class="card"><div class="lab">Best promise = this percentile</div><div class="stat" id="tauVal"></div></div>
+      <div class="card"><div class="lab">Share of orders that should be late</div><div class="stat" id="lateVal"></div></div>
+    </div>
+    <p class="note">At a ratio of 1 the best promise is the median. As lateness gets costlier, the best promise moves up the distribution.</p>
+  </div>
+
+  <div class="call"><b>Why it matters.</b> A model that predicts the <b>average</b> (squared error) aims at the wrong target. A model that predicts the <b>75th percentile</b> (quantile or "pinball" loss) aims at the right one.</div>
+
+  <h3>Metrics we report</h3>
+  <div class="grid">
+    <div class="card"><h4>On-time %</h4>Share of orders delivered within the promise.</div>
+    <div class="card"><h4>Late &gt; 10 min %</h4>The painful tail.</div>
+    <div class="card"><h4>Average over-promise (min)</h4>How much padding customers see.</div>
+    <div class="card"><h4>Cost per order</h4>The number above. Our <b>primary metric</b>, because it is the business decision in one number.</div>
+  </div>
+  <div id="q1"></div>
+
+  <h3>Turning the business cost into code</h3>
+  <div class="viz">
+    <div class="vt">Interactive · hand check with three orders (30, 40 and 50 minutes)</div>
+    <label for="pSl" class="ui" style="font:.9rem system-ui">Promise for every order: <b id="pVal">35</b> min</label>
+    <input type="range" id="pSl" min="20" max="60" step="1" value="35">
+    <div class="grid" style="margin-top:12px">
+      <div class="card"><div class="lab">on_time_%</div><div class="stat" id="hOn"></div></div>
+      <div class="card"><div class="lab">late_&gt;10min_%</div><div class="stat" id="hLate"></div></div>
+      <div class="card"><div class="lab">avg_over_promise_min</div><div class="stat" id="hOver"></div></div>
+      <div class="card"><div class="lab">cost_per_order</div><div class="stat" id="hCost"></div></div>
+    </div>
+    <p class="note">At a promise of 35 the output matches the reference run: on-time 33.33, late over 10 min 33.33, over-promise 1.67, cost 21.67. Try other promises to see the trade-off.</p>
+  </div>
+  <details><summary>Code: setup and the cost function</summary><div><pre>import warnings; warnings.filterwarnings("ignore")
+import numpy as np, pandas as pd, matplotlib.pyplot as plt, seaborn as sns
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import KFold
+
+C_LATE, C_EARLY = 3.0, 1.0     # one minute late hurts 3x as much as one minute early
+
+def promise_report(actual, promise):
+    actual, promise = np.asarray(actual, float), np.asarray(promise, float)
+    late = np.maximum(actual - promise, 0)      # minutes late (0 if on time)
+    early = np.maximum(promise - actual, 0)     # minutes of over-promise (0 if late)
+    return {"on_time_%": 100 * (actual &lt;= promise).mean(),
+            "late_&gt;10min_%": 100 * (late &gt; 10).mean(),
+            "avg_over_promise_min": early.mean(),
+            "cost_per_order": (C_LATE * late + C_EARLY * early).mean()}
+
+promise_report([30, 40, 50], [35, 35, 35])</pre><pre class="out">{'on_time_%': 33.33, 'late_>10min_%': 33.33, 'avg_over_promise_min': 1.67, 'cost_per_order': 21.67}</pre></div></details>
+
+  <h3>Checking the theory on simulated data</h3>
+  <p>We simulate 200,000 right-skewed delivery times, then try promising the 50th, 60th ... 95th percentile. If the theory is right, the cost is lowest at the 75th.</p>
+  <div class="viz">
+    <div class="vt">Interactive · promise = chosen percentile of simulated times</div>
+    <div class="bars" id="simBars"></div>
+    <label for="tSl" class="ui" style="font:.9rem system-ui;display:block;margin-top:12px">Promise percentile: <b id="tVal">0.75</b></label>
+    <input type="range" id="tSl" min="0" max="6" step="1" value="3" aria-valuetext="0.75">
+    <div class="grid" style="margin-top:10px">
+      <div class="card"><div class="lab">on_time_%</div><div class="stat" id="sOn"></div></div>
+      <div class="card"><div class="lab">late_&gt;10min_%</div><div class="stat" id="sLate"></div></div>
+      <div class="card"><div class="lab">avg_over_promise_min</div><div class="stat" id="sOver"></div></div>
+      <div class="card"><div class="lab">cost_per_order</div><div class="stat" id="sCost"></div></div>
+    </div>
+    <p class="note">Cost bottoms out at the 75th percentile (13.72). Promising the median gives only half the customers an on-time delivery, and promising the 95th percentile pads every order so much that cost climbs again.</p>
+  </div>
+  <details><summary>Code</summary><div><pre>rs = np.random.RandomState(0)
+times = 15 + rs.gamma(shape=4, scale=5, size=200_000)
+
+rows = []
+for tau in [0.50, 0.60, 0.70, 0.75, 0.80, 0.90, 0.95]:
+    promise = np.full(len(times), np.quantile(times, tau))
+    rows.append({"promise = percentile": tau, **promise_report(times, promise)})</pre></div></details>
+</section>
+
+<section id="data">
+  <div class="num">Step 2</div>
+  <h2>The data, and the timeline that decides what is allowed</h2>
+  <p>SwiftBite's order table has one row per order (Jan to Jun 2025). The data is <b>synthetic</b>, built to behave like a real delivery platform, with realistic mess. In a real project you would have no answer key, so none is used here.</p>
+  <div class="viz">
+    <div class="vt">Interactive · data dictionary by when each column is known</div>
+    <div class="tabs" id="dFilt" role="group" aria-label="Filter by when known"></div>
+    <div class="tw"><table id="dT"></table></div>
+    <p class="note">The model must predict at the moment of ordering, so every input must exist at that moment. Columns marked after pickup or after delivery are off limits as inputs.</p>
+  </div>
+  <div id="q2"></div>
+  <div class="card"><h4>Try it yourself · a leakage audit with a sceptical reviewer</h4>
+  <div class="prompt">"Here is the data dictionary of a food-delivery order table [paste the table above]. The model will predict the delivery time at the moment the customer places the order. For every column, say whether it is available at that moment, and rate leakage risk as none, possible or definite, with one sentence of reasoning. Then list three columns whose availability is ambiguous and the exact question I should ask the data engineering team about each."</div>
+  <p style="margin:10px 0 0;font-size:.95rem">Then check <code>restaurant_avg_prep_min</code> ("30-day average"). Does the AI ask whether this average could include the very order being predicted, or orders placed later? What does it suggest to verify?</p></div>
+  <details><summary>Code: loading the dataset</summary><div><pre>from swiftbite_data import make_swiftbite
+raw, _answer_key = make_swiftbite()
+print("Rows x columns:", raw.shape)</pre><pre class="out">Rows x columns: (60240, 20)
+Period: 2025-01-01 00:16:00 to 2025-06-30 23:49:00</pre></div></details>
+</section>
+
+<section id="audit">
+  <div class="num">Step 3</div>
+  <h2>Audit before you model</h2>
+  <p>Every dataset has problems. The habit that matters is to <b>find them, decide what to do, and write it down</b>. Never clean silently.</p>
+  <div class="viz">
+    <div class="vt">Audit findings · rows affected out of 60,240</div>
+    <div class="bars" id="auditBars"></div>
+    <p class="note">Delivery time before cleaning: mean 38.1, median 34.6, min −12.0, max 780.0 minutes. Negative and 13-hour times are impossible.</p>
+  </div>
+  <div class="viz">
+    <div class="vt">Interactive · the cleaning log</div>
+    <div class="row" id="cleanBtns"></div>
+    <div class="bars" id="cleanBars" style="margin-top:12px"></div>
+    <p class="note" id="cleanNote"></p>
+  </div>
+  <div class="tw"><table>
+    <tr><th>Issue</th><th>Decision</th><th>Why</th></tr>
+    <tr><td>Duplicate orders</td><td><span class="chip bad">Drop</span></td><td>The same order counted twice biases everything.</td></tr>
+    <tr><td>Internal QA accounts</td><td><span class="chip bad">Drop</span></td><td>Not real customers, with delivery times of a few minutes.</td></tr>
+    <tr><td>Delivery time under 5 or over 240 min</td><td><span class="chip bad">Drop</span></td><td>Timestamp errors. You cannot learn from a wrong label, so we drop impossible <b>targets</b>.</td></tr>
+    <tr><td>GPS distance of 0 km or over 40 km</td><td><span class="chip ok">Keep for now</span></td><td>An error in a <b>feature</b>, not the label. Handled properly in Part 2.</td></tr>
+    <tr><td>Missing weather and prep estimate</td><td><span class="chip ok">Keep</span></td><td>The model handles missing values natively. Dropping rows would bias the data.</td></tr>
+  </table></div>
+  <div class="call"><b>Rule.</b> We <b>did not fit anything</b> (no imputer, no scaler) on the whole dataset. Anything learned from data must be learned from the training period only.</div>
+  <details><summary>Code: audit and cleaning</summary><div><pre>audit = pd.DataFrame([
+    ("duplicate order_id rows",                      raw.duplicated("order_id").sum()),
+    ("internal QA test accounts (customer_id QA-*)", raw.customer_id.str.startswith("QA").sum()),
+    ("impossible delivery time (&lt;5 or &gt;240 min)",    (~raw.actual_delivery_min.between(5, 240)).sum()),
+    ("suspicious GPS distance (0 km or &gt; 40 km)",    ((raw.distance_km == 0) | (raw.distance_km &gt; 40)).sum()),
+    ("missing weather / temperature",                raw.weather.isna().sum()),
+    ("missing restaurant_avg_prep_min",              raw.restaurant_avg_prep_min.isna().sum()),
+], columns=["issue", "rows"])
+
+log = []
+df = raw.copy()
+n0 = len(df); df = df.drop_duplicates("order_id");                log.append(("drop duplicate orders", n0 - len(df)))
+n0 = len(df); df = df[~df.customer_id.str.startswith("QA")];      log.append(("drop internal QA test orders", n0 - len(df)))
+n0 = len(df); df = df[df.actual_delivery_min.between(5, 240)];    log.append(("drop impossible delivery times", n0 - len(df)))</pre></details>
+</section>
+
+<section id="split">
+  <div class="num">Step 4</div>
+  <h2>Split by time, and seal the test set</h2>
+  <p>In production, the model predicts <b>tomorrow's</b> orders from <b>yesterday's</b> data. So we mimic that. A random split would scatter next month's orders into the training set and let the model peek at the future.</p>
+  <div class="viz">
+    <div class="vt">Interactive · the time split</div>
+    <svg viewBox="0 0 600 120" id="splitSvg" role="img" aria-label="Timeline from January to June. January to April is train, May is validation, June is the sealed test set."></svg>
+    <div class="tabs" id="spBtns" style="margin-top:10px"></div>
+    <p class="note" id="spNote" aria-live="polite"></p>
+  </div>
+  <details><summary>Code: the split</summary><div><pre>df["month"] = df.order_time.dt.month
+df["hour"] = df.order_time.dt.hour
+df["is_peak"] = df.hour.isin([12, 13, 19, 20, 21]).astype(int)
+
+train = df[df.month &lt;= 4].copy()   # Jan - Apr : learn
+val   = df[df.month == 5].copy()   # May       : choose between ideas
+test  = df[df.month == 6].copy()   # June      : sealed</pre></div></details>
+  <div id="q3"></div>
+</section>
+
+<section id="eda">
+  <div class="num">Step 5</div>
+  <h2>Look at the data with a business lens</h2>
+  <p>Plots on the training period (delivery time by hour, zone, distance and weather) lead to six hypotheses worth writing down.</p>
+  <div class="viz">
+    <div class="vt">Explorer · six hypotheses</div>
+    <div class="tabs" role="tablist" data-tabs>
+      <button role="tab" aria-selected="true">1 · Skew</button>
+      <button role="tab" aria-selected="false">2 · Peak hours</button>
+      <button role="tab" aria-selected="false">3 · Zones</button>
+      <button role="tab" aria-selected="false">4 · Weather</button>
+      <button role="tab" aria-selected="false">5 · Distance</button>
+      <button role="tab" aria-selected="false">6 · Odd points</button>
+    </div>
+    <div class="panel">
+      <p><b>Right-skewed target.</b> A few very slow deliveries pull the mean above the median. The 75th percentile sits well above the mean. This is why a "predict the average" model will under-promise.</p>
+      <svg viewBox="0 0 400 130" role="img" aria-label="Schematic right-skewed distribution with the median, mean and 75th percentile marked in that order from left to right." style="width:100%;max-width:460px;display:block;margin:auto">
+        <path d="M20,110 C60,110 70,20 110,20 C150,20 150,80 210,100 C260,108 330,110 380,110 Z" fill="#cfe8f7" stroke="#1c6c9c" stroke-width="2"/>
+        <line x1="108" x2="108" y1="12" y2="112" stroke="#0e4468" stroke-dasharray="4 3"/><text x="108" y="124" font-size="10" text-anchor="middle" fill="#12324a">median</text>
+        <line x1="140" x2="140" y1="30" y2="112" stroke="#0e4468" stroke-dasharray="4 3"/><text x="150" y="26" font-size="10" fill="#12324a">mean</text>
+        <line x1="190" x2="190" y1="60" y2="112" stroke="#0e4468" stroke-width="2.5"/><text x="205" y="124" font-size="10" text-anchor="middle" fill="#12324a">75th pct</text>
+      </svg>
+      <p class="note">Schematic of the shape, not the plotted data.</p>
+    </div>
+    <div class="panel" hidden><p><b>Peak hours are slower</b>, and the 75th percentile rises faster than the mean (more spread at peak).</p></div>
+    <div class="panel" hidden><p><b>Zones differ:</b> dense or old areas are slower, suburbs are further but faster per km.</p></div>
+    <div class="panel" hidden><p><b>Weather matters</b>, and its effect is larger in the tail.</p></div>
+    <div class="panel" hidden><p><b>Spread grows with distance:</b> longer trips are slower <i>and</i> less predictable, so the same model must promise a wider margin for long trips. The right promise is <b>order-specific</b>.</p></div>
+    <div class="panel" hidden><p>Some orders have a recorded distance of 0 km or of 40 to 90 km but a normal delivery time. Those distances cannot be real. They were noted in the audit and are handled in Part 2.</p></div>
+  </div>
+</section>
+
+<section id="ladder">
+  <div class="num">Step 6</div>
+  <h2>The baseline ladder</h2>
+  <p>A model is only meaningful relative to simpler alternatives. We climb a ladder, and each rung must be beaten by the next.</p>
+  <h3>The model's inputs</h3>
+  <p>Two lists of columns are fixed: <code>CAT</code> (zone, restaurant type, weather) and <code>NUM</code> (hour, is_peak, restaurant_avg_prep_min, distance_km, n_items, order_value, temperature_c, traffic_index, riders_available_nearby). All are known at the moment the order is placed, and none of the leaky columns are included. The only fix applied is filling missing weather with <code>"unknown"</code>, so "missing" becomes a category of its own. There is no scaling, number imputation or hyperparameter tuning yet.</p>
+  <h3>One function that builds the model</h3>
+  <p><code>make_model</code> returns a pipeline with two steps. An <code>OrdinalEncoder</code> encodes categories, learning them from training data only (an unseen category becomes "missing" instead of crashing). Then <code>HistGradientBoostingRegressor</code> uses the loss we choose: <code>loss="quantile", quantile=0.75</code> aims at the 75th percentile, while <code>loss="squared_error"</code> aims at the average.</p>
+  <details><summary>Code: inputs, model and scoreboard</summary><div><pre>CAT = ["zone", "restaurant_type", "weather"]
+NUM = ["hour", "is_peak", "restaurant_avg_prep_min", "distance_km", "n_items", "order_value",
+       "temperature_c", "traffic_index", "riders_available_nearby"]
+
+def get_X(frame, num=NUM, cat=CAT):
+    X = frame[cat + num].copy()
+    if "weather" in cat:
+        X["weather"] = X["weather"].fillna("unknown")
+    return X
+
+def make_model(loss="quantile", quantile=0.75, cat=CAT, **params):
+    pre = ColumnTransformer([("cat", OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=np.nan), cat)],
+                            remainder="passthrough")
+    hgb = HistGradientBoostingRegressor(loss=loss, quantile=quantile if loss == "quantile" else None,
+                                        categorical_features=list(range(len(cat))), random_state=0, **params)
+    return Pipeline([("prep", pre), ("model", hgb)])
+
+LEDGER = []
+def record(name, actual, promise):
+    LEDGER.append({"model": name, **promise_report(actual, promise)})
+    return pd.DataFrame(LEDGER).set_index("model").round(2)
+
+record("1. current promise (rule)", y_va, val.promised_eta_min.values)
+record("2. one number for all: 75th pct", y_va, np.full(len(val), np.quantile(y_tr, 0.75)))
+# 3: 75th percentile by zone x peak (from train)
+m_sq = make_model("squared_error").fit(get_X(train), y_tr)       # rungs 4 and 5
+m_q  = make_model("quantile", 0.75).fit(get_X(train), y_tr)      # rung 6</pre></div></details>
+
+  <div class="viz">
+    <div class="vt">Interactive · the ladder on May validation data</div>
+    <div class="tabs" id="mBtns" role="group" aria-label="Metric"></div>
+    <div class="bars" id="ladBars"></div>
+    <p class="note" id="ladNote"></p>
+  </div>
+  <div class="grid">
+    <div class="card"><h4>Simple statistics do not beat the rule</h4>Rungs 2 and 3 get the on-time share right but pad every order, so the cost is no better than the current rule.</div>
+    <div class="card"><h4>A model that sees the order wins big</h4>Cost roughly halves compared with anything simple.</div>
+    <div class="card"><h4>Better RMSE, worse cost</h4>Model 4 has the better RMSE (about 7.3 vs 8.0 minutes) but the worse cost. It aims at the average, so only about 60% of promises hold. A buffer rescues it, and the quantile model gets there directly and adapts the margin to each order.</div>
+  </div>
+  <div id="q4"></div>
+  <div class="card"><h4>Try it yourself · is our cost function the right one?</h4>
+  <div class="prompt">"A food-delivery company promises delivery times. Late deliveries cost 3x per minute compared with over-promising. But there are two extra facts: (a) promises above 60 minutes make 10% of customers abandon the order, and (b) lateness beyond 15 minutes triggers a fixed refund of 100 cost units. Propose how to change the cost function and the model (still using scikit-learn) to reflect these, explain whether the optimal promise is still a simple percentile, and suggest two diagnostic plots to check the model respects these rules."</div>
+  <p style="margin:10px 0 0;font-size:.95rem">Which of these extra rules would change the training loss, and which would be better handled after the model, as post-processing on the promise?</p></div>
+</section>
+
+<section id="leak">
+  <div class="num">Step 7</div>
+  <h2>The too-good-to-be-true trap</h2>
+  <p>A colleague suggests adding every column in the table. Let's see what happens when the post-delivery columns <code>trip_min</code>, <code>pickup_wait_min</code> and <code>customer_rating</code> are added.</p>
+  <div class="viz">
+    <div class="vt">Interactive · add leaky columns, watch the "improvement"</div>
+    <div class="tabs" id="lkBtns" role="group" aria-label="Extra columns"></div>
+    <div class="bars" id="lkBars"></div>
+    <p class="note" id="lkNote"></p>
+  </div>
+  <details><summary>Code</summary><div><pre>LEAKY = ["trip_min", "pickup_wait_min", "customer_rating"]
+for extra in [[], ["trip_min"], ["customer_rating"], LEAKY]:
+    mdl = make_model("quantile", 0.75).fit(get_X(train, NUM).assign(**{c: train[c] for c in extra}), y_tr)
+    pred = mdl.predict(get_X(val, NUM).assign(**{c: val[c] for c in extra}))</pre></div></details>
+  <div class="grid">
+    <div class="card"><h4><code>trip_min</code></h4>Time from pickup to the doorstep: <b>part of the answer</b>.</div>
+    <div class="card"><h4><code>customer_rating</code></h4>Falls when the delivery was late, so it carries the <b>outcome</b>.</div>
+    <div class="card"><h4><code>pickup_wait_min</code></h4>Happens <b>after the order is placed</b>.</div>
+  </div>
+  <p>None of them exist when the promise has to be made. In production those columns would be empty, the model would fail, and the "improvement" would vanish. The gap between the honest and the leaky model <b>is the leak</b>.</p>
+  <div id="q5"></div>
+</section>
+
+<section id="features">
+  <div class="num">Step 8</div>
+  <h2>Features that are safe in production</h2>
+  <p>A strong, legitimate signal is <b>how each restaurant has behaved in the past</b>: its average and variability in delivery time. It must use <b>only earlier orders</b>, as in production.</p>
+  <div class="viz">
+    <div class="vt">Interactive · <code>shift(1)</code> + <code>expanding()</code> (illustrative numbers)</div>
+    <p style="font:.9rem system-ui;margin:0 0 6px">Delivery times (min) for one restaurant, in order. Pick the order being predicted:</p>
+    <label for="hSl" class="ui" style="font:.9rem system-ui">Order number: <b id="hVal">5</b></label>
+    <input type="range" id="hSl" min="1" max="8" step="1" value="5">
+    <div class="seq" id="hSeq" aria-live="polite"></div>
+    <p id="hRes" style="font:.95rem system-ui;margin:6px 0 0"></p>
+    <p class="note">Illustrative values with a minimum of 3 past orders for the demo. The real feature uses <code>min_periods=10</code>. The order never sees its own delivery time or anything after it.</p>
+  </div>
+  <ul>
+    <li><code>shift(1)</code> pushes every value down one row, so the order never sees its own delivery time.</li>
+    <li><code>expanding()</code> then averages everything before that point.</li>
+    <li><code>min_periods=10</code> returns "missing" until the restaurant has 10 past orders.</li>
+    <li>Three features result: past mean, past spread (std) and number of past orders. <code>rest_hist_n</code> is deliberately not used as a model input.</li>
+  </ul>
+  <details><summary>Code: <code>add_history</code> and rung 7</summary><div><pre>def add_history(frame_all, min_orders=10):
+    d = frame_all.sort_values("order_time")
+    g = d.groupby("restaurant_id").actual_delivery_min
+    hist = pd.DataFrame({
+        "rest_hist_mean": g.transform(lambda s: s.shift(1).expanding(min_periods=min_orders).mean()),
+        "rest_hist_std":  g.transform(lambda s: s.shift(1).expanding(min_periods=min_orders).std()),
+        "rest_hist_n":    g.cumcount(),
+    })
+    return frame_all.join(hist)
+
+df = add_history(df)
+train, val, test = df[df.month &lt;= 4].copy(), df[df.month == 5].copy(), df[df.month == 6].copy()
+NUM_V2 = NUM + ["rest_hist_mean", "rest_hist_std"]
+
+m_h = make_model("quantile", 0.75).fit(get_X(train, NUM_V2), y_tr)
+p_h = m_h.predict(get_X(val, NUM_V2))
+record("7. + restaurant history (past-only)", y_va, p_h)</pre><pre class="out">Orders with enough restaurant history -> train: 89.7% | validation: 100.0%</pre></div></details>
+  <div class="grid">
+    <div class="card"><div class="stat">8.80 → 8.40</div>cost per order, rung 6 to rung 7</div>
+    <div class="card"><div class="stat">4.44 → 3.89</div>late over 10 minutes (%), rung 6 to rung 7</div>
+  </div>
+  <h3>What is the model actually using?</h3>
+  <p><b>Permutation importance</b> shuffles one column at a time on validation data and measures how much the business cost gets worse. The bigger the increase, the more the model relies on that column. We score by cost (not accuracy) because cost is the real metric. The top drivers are <b>distance, rider supply, restaurant behaviour, traffic and weather</b>, matching what the exploration showed.</p>
+  <details><summary>Code</summary><div><pre>from sklearn.inspection import permutation_importance
+sub = val.sample(3000, random_state=0)
+pi = permutation_importance(m_h, get_X(sub, NUM_V2), sub.actual_delivery_min, n_repeats=3, random_state=0,
+        scoring=lambda est, X, y_: -promise_report(y_, est.predict(X))["cost_per_order"])</pre></div></details>
+  <div class="call"><b>Two cautions for production.</b> Restaurants with fewer than 10 past orders get a missing history (the model treats it as unknown, exactly the situation for a brand-new restaurant). And in a live system the history must be refreshed from completed orders, which arrive with a delay.</div>
+  <div class="card"><h4>Try it yourself · more legitimate features</h4>
+  <div class="prompt">"My food-delivery table has these columns available at order time: order_time, restaurant_id, zone, distance_km, n_items, order_value, weather, traffic_index, riders_available_nearby. Propose 8 new features that are available at order time and likely to help predict delivery time, such as recent demand in the zone in the last 15 minutes or the restaurant's recent peak-hour behaviour. For each, give the pandas code and explain how to compute it so that it only uses data from BEFORE the order (no leakage), and what could go wrong in production if the data feed is late."</div>
+  <p style="margin:10px 0 0;font-size:.95rem">For each suggested feature, find the line that guarantees it uses only the past. Reject any you cannot justify.</p></div>
+</section>
+
+<section id="expect">
+  <div class="num">Step 9</div>
+  <h2>Write down the expectation</h2>
+  <p>Before the sealed June data is opened, we make a <b>written prediction</b> of how the model should perform, based on validation only. Part 2 compares it with reality.</p>
+  <div class="viz">
+    <div class="vt">Cost per order · lower is better</div>
+    <div class="bars" id="expBars"></div>
+    <p class="note">Inside the stable months, random and time-based estimates agree closely (8.61 vs 8.40), so the split protocol does not change the answer <b>here</b>. That is no reason to skip it. The difference appears when conditions change, which is what happens in June.</p>
+  </div>
+  <details><summary>Code</summary><div><pre>kf = KFold(5, shuffle=True, random_state=0)
+oof = np.zeros(len(train))
+for a, b in kf.split(train):
+    mm = make_model("quantile", 0.75).fit(get_X(train.iloc[a], NUM_V2), y_tr[a])
+    oof[b] = mm.predict(get_X(train.iloc[b], NUM_V2))
+rand_cost = promise_report(y_tr, oof)["cost_per_order"]
+time_cost = promise_report(y_va, p_h)["cost_per_order"]
+EXPECTED_COST = time_cost</pre><pre class="out">Random 5-fold CV inside Jan-Apr : cost 8.61
+Train Jan-Apr, score May        : cost 8.40
+Our written-down expectation: about 8.4 cost units per order (the current rule scores 18.2).</pre></div></details>
+</section>
+
+<section id="wrap">
+  <div class="num">Wrap-up</div>
+  <h2>Back to Ishita's office</h2>
+  <p>Kabir brings Ishita and Dev a first honest result.</p>
+  <div class="grid">
+    <div class="card"><h4>Framed as a decision</h4>The promise is a 75th-percentile estimate, chosen because lateness costs 3 times more than padding.</div>
+    <div class="card"><h4>The metric is the business</h4>Cost per order, with on-time and late-over-10 beside it.</div>
+    <div class="card"><h4>Audited and logged</h4>Every cleaning step is logged. Leakage columns are identified and excluded.</div>
+    <div class="card"><h4>Honest evaluation</h4>Time-based split, June sealed, a written expectation.</div>
+    <div class="card"><h4>Roughly half the cost</h4>About 8.4 against about 18.2 on validation, with on-time deliveries up from about 57% to about 75% and far fewer very late orders.</div>
+  </div>
+  <h3>Questions Ishita asks next</h3>
+  <div class="viz">
+    <div class="vt">The open questions for Part 2</div>
+    <div class="tabs" role="tablist" data-tabs>
+      <button role="tab" aria-selected="true">1</button><button role="tab" aria-selected="false">2</button><button role="tab" aria-selected="false">3</button><button role="tab" aria-selected="false">4</button>
+    </div>
+    <div class="panel"><p>"Where does it fail? Which restaurants, zones and weather?"</p></div>
+    <div class="panel" hidden><p>"The data had <b>bad GPS distances</b>. Do they matter?"</p></div>
+    <div class="panel" hidden><p>"June is the monsoon, and we <b>launch a new zone</b> in the same month. Will the model hold?"</p></div>
+    <div class="panel" hidden><p>"How will I know <b>in time</b> if it stops working?"</p></div>
+  </div>
+  <h3>Key takeaways</h3>
+  <div class="viz"><div class="vt">Tap a card to expand</div><div id="keys"></div></div>
+  <p><b>Next, in Part 2:</b> error analysis, unsupervised tools as detectives (anomaly detection, PCA, clustering), the final model, the sealed June test, drift, monitoring, and a decision memo.</p>
+</section>
+</main>
+
+<footer>Case study part-1 post read<small>From business problem to model</small></footer>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+
+/* nav */
+const secs=[["story","Story"],["frame","Frame"],["data","Data"],["audit","Audit"],["split","Split"],["eda","Explore"],["ladder","Baselines"],["leak","Leakage"],["features","Features"],["expect","Expectation"],["wrap","Wrap-up"]];
+$("#nav").insertAdjacentHTML("beforeend",secs.map(s=>`<a href="#${s[0]}" data-s="${s[0]}">${s[1]}</a>`).join(""));
+function onScroll(){
+  const h=document.documentElement;$("#bar").style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";
+  let cur=secs[0][0];secs.forEach(s=>{if($("#"+s[0]).getBoundingClientRect().top<120)cur=s[0]});
+  $$("nav a").forEach(a=>a.classList.toggle("on",a.dataset.s===cur));
+}
+addEventListener("scroll",onScroll,{passive:true});onScroll();
+
+/* tabs */
+function initTabs(root){
+  const tabs=$$("[role=tab]",root),panels=$$(":scope > .panel",root.parentElement);
+  tabs.forEach((t,i)=>{
+    t.addEventListener("click",()=>sel(i));
+    t.addEventListener("keydown",e=>{if(e.key==="ArrowRight")sel((i+1)%tabs.length,1);if(e.key==="ArrowLeft")sel((i-1+tabs.length)%tabs.length,1)});
+  });
+  function sel(i,f){tabs.forEach((t,j)=>{t.setAttribute("aria-selected",j===i);t.tabIndex=j===i?0:-1});panels.forEach((p,j)=>p.hidden=j!==i);if(f)tabs[i].focus()}
+}
+/* button groups (aria-pressed) */
+function btnGroup(id,labels,cb,start=0){
+  const el=$(id);el.innerHTML=labels.map((l,i)=>`<button class="${i===start?'':'alt'}" aria-pressed="${i===start}">${l}</button>`).join("");
+  const bs=$$("button",el);
+  bs.forEach((b,i)=>b.onclick=()=>{bs.forEach((x,j)=>{x.classList.toggle("alt",j!==i);x.setAttribute("aria-pressed",j===i)});cb(i)});
+  cb(start);
+}
+function bars(id,rows,max,fmt){
+  $(id).innerHTML=rows.map(r=>`<div class="brow"><div>${r[0]}</div><div class="btrack"><div class="bfill ${r[2]||''}" style="width:${Math.max(0,r[1])/max*100}%"></div></div><div class="bval">${fmt?fmt(r[1]):r[1]}</div></div>`).join("");
+}
+
+/* framing */
+(function(){
+  const F=[["Who uses it?","The app shows it to the customer, and operations uses it to plan."],["When is it made?","The moment the order is placed."],["What do we predict?","The delivery time, as a <b>promise</b> (minutes)."],["What is a mistake?","<b>Late:</b> customer annoyed, refunds, churn. <b>Early:</b> promise looked too long, lost orders."],["Which is worse?","Late. We assume <b>one minute late costs 3 times one minute early</b>."],["Benchmark?","The existing rule-based promise."]];
+  $("#frameTabs").innerHTML=F.map((f,i)=>`<button role="tab" aria-selected="${i===0}">${f[0]}</button>`).join("");
+  const out=$("#frameOut");
+  function show(i){out.innerHTML=`<h4 style="margin-top:0">${F[i][0]}</h4>${F[i][1]}`}
+  show(0);
+  const tabs=$$("[role=tab]",$("#frameTabs"));
+  tabs.forEach((t,i)=>t.addEventListener("click",()=>{tabs.forEach((b,j)=>b.setAttribute("aria-selected",j===i));show(i)}));
+})();
+
+/* ratio slider */
+function ratio(){const r=+$("#rSl").value,t=r/(r+1);$("#rVal").textContent=r;$("#tauVal").textContent=(t*100).toFixed(1)+"th";$("#lateVal").textContent=((1-t)*100).toFixed(1)+"%"}
+$("#rSl").oninput=ratio;ratio();
+
+/* hand check */
+function hand(){
+  const p=+$("#pSl").value,a=[30,40,50];$("#pVal").textContent=p;
+  const late=a.map(x=>Math.max(x-p,0)),early=a.map(x=>Math.max(p-x,0)),m=v=>v.reduce((x,y)=>x+y,0)/v.length;
+  $("#hOn").textContent=(100*a.filter(x=>x<=p).length/3).toFixed(2);
+  $("#hLate").textContent=(100*late.filter(x=>x>10).length/3).toFixed(2);
+  $("#hOver").textContent=m(early).toFixed(2);
+  $("#hCost").textContent=m(late.map((l,i)=>3*l+early[i])).toFixed(2);
+}
+$("#pSl").oninput=hand;hand();
+
+/* simulated percentile table */
+(function(){
+  const T=[[.5,50,18.37,3.01,17.05],[.6,60,13.66,4.40,15.04],[.7,70,9.45,6.32,13.89],[.75,75,7.60,7.57,13.72],[.8,80,5.82,9.17,13.93],[.9,90,2.66,14.11,16.35],[.95,95,1.24,19.11,20.18]];
+  function draw(){
+    const i=+$("#tSl").value,t=T[i];
+    $("#tVal").textContent=t[0].toFixed(2);$("#tSl").setAttribute("aria-valuetext",t[0].toFixed(2));
+    $("#sOn").textContent=t[1].toFixed(1);$("#sLate").textContent=t[2].toFixed(2);$("#sOver").textContent=t[3].toFixed(2);$("#sCost").textContent=t[4].toFixed(2);
+    bars("#simBars",T.map((r,k)=>[`Percentile ${r[0].toFixed(2)}${k===3?" ★ lowest":""}`,r[4],k===i?"":"b2"]),21,v=>v.toFixed(2));
+  }
+  $("#tSl").oninput=draw;draw();
+})();
+
+/* data dictionary */
+(function(){
+  const D=[["order_time","Timestamp of the order",0],["customer_id","Customer",0],["restaurant_id, restaurant_type","Which restaurant, and its kind",0],["restaurant_avg_prep_min","Platform's 30-day average prep-time estimate (some missing)",0],["zone","City zone of the customer",0],["distance_km","Distance restaurant to customer (from GPS)",0],["n_items, order_value","Basket",0],["weather, temperature_c","From a weather feed (sometimes missing)",0],["traffic_index","From a maps service (0 to 1.5)",0],["riders_available_nearby","Idle riders within 3 km",0],["promised_eta_min","The current rule's promise",0],["pickup_wait_min","How long the rider waited at the restaurant",1],["trip_min","Minutes from pickup to doorstep",2],["customer_rating","Rating the customer gave",2],["delivery_status","late_refund or delivered",2],["actual_delivery_min","The target: minutes from order to doorstep",2]];
+  const W=["Order placed","After pickup","After delivery"];
+  btnGroup("#dFilt",["All","Order placed","After pickup","After delivery"],k=>{
+    $("#dT").innerHTML="<tr><th>Column</th><th>Meaning</th><th>Known when?</th><th>Safe input?</th></tr>"+D.filter(d=>k===0||d[2]===k-1).map(d=>`<tr><td><code>${d[0]}</code></td><td>${d[1]}</td><td>${W[d[2]]}</td><td>${d[2]===0?'<span class="chip ok">Yes</span>':d[0]==="actual_delivery_min"?'<span class="chip bad">Target</span>':'<span class="chip bad">Leakage</span>'}</td></tr>`).join("");
+  });
+})();
+
+/* audit */
+bars("#auditBars",[["Duplicate order_id rows",240],["QA test accounts",698,"b2"],["Impossible delivery time",551],["Suspicious GPS distance",566,"b2"],["Missing weather / temp",2448],["Missing prep estimate",4690,"b2"]],4690,v=>v.toLocaleString());
+(function(){
+  const S=[["Raw",60240,"Starting point: 60,240 rows."],["Drop duplicates",60000,"240 duplicate orders removed."],["Drop QA orders",59304,"696 internal QA test orders removed."],["Drop impossible times",59002,"302 impossible delivery times removed. 59,002 rows left; GPS-glitch distances and missing values kept on purpose."]];
+  btnGroup("#cleanBtns",S.map(s=>s[0]),k=>{
+    bars("#cleanBars",S.slice(0,k+1).map((s,i)=>[s[0],s[1],i===k?"":"b2"]),60240,v=>v.toLocaleString());$("#cleanNote").textContent=S[k][2];
+  },3);
+})();
+
+/* split timeline */
+(function(){
+  const M=["Jan","Feb","Mar","Apr","May","Jun"],svg=$("#splitSvg");
+  const P=[["Train",0,4,38043,"Jan to Apr (2025-01-01 → 2025-04-30). Learn from 38,043 orders."],["Validation",4,5,10455,"May. Choose between ideas on 10,455 orders."],["Test (sealed)",5,6,10504,"June. 10,504 orders, opened once, at the end of Part 2."]];
+  function draw(k){
+    let h="";
+    P.forEach((p,i)=>{const x=20+p[1]*93,w=(p[2]-p[1])*93;
+      h+=`<rect x="${x}" y="30" width="${w-4}" height="46" rx="8" fill="${i===k?'#1c6c9c':i===2?'#e8eef2':'#cfe8f7'}" stroke="#1c6c9c" stroke-width="${i===2?2:1}" ${i===2?'stroke-dasharray="5 3"':''}/>
+      <text x="${x+(w-4)/2}" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="${i===k?'#fff':'#0e4468'}">${p[0]}${i===2?" 🔒":""}</text>`});
+    M.forEach((m,i)=>h+=`<text x="${20+i*93+44}" y="98" text-anchor="middle" font-size="11" fill="#41627a">${m}</text>`);
+    h+=`<text x="300" y="18" text-anchor="middle" font-size="11" fill="#41627a">time →</text>`;
+    svg.innerHTML=h;$("#spNote").textContent=P[k][4];
+  }
+  btnGroup("#spBtns",["Train","Validation","Test (sealed)"],draw);
+})();
+
+/* ladder */
+(function(){
+  const R=[["1. Current rule",56.84,17.06,4.48,18.19],["2. One number: 75th pct",74.28,10.87,10.13,19.27],["3. 75th pct by zone × peak",74.31,10.73,9.80,18.62],["4. GBDT, squared error",59.57,6.83,2.55,9.58],["5. GBDT sq. error + 3 min",77.13,4.37,4.62,8.89],["6. GBDT, quantile (τ=0.75)",74.69,4.44,4.38,8.80],["7. + restaurant history",74.46,3.89,4.31,8.40]];
+  const M=[["Cost per order",4,20,"lower is better",""],["On-time %",1,100,"higher is better","%"],["Late > 10 min %",2,20,"lower is better","%"],["Avg over-promise (min)",3,12,"lower means less padding",""]];
+  btnGroup("#mBtns",M.map(m=>m[0]),k=>{
+    const m=M[k];bars("#ladBars",R.map((r,i)=>[r[0],r[m[1]],i>=5?"":"b2"]),m[2],v=>v.toFixed(2)+m[4]);
+    $("#ladNote").textContent=m[0]+": "+m[3]+". Solid bars are the quantile-loss models (rungs 6 and 7). RMSE: model 4 is about 7.29 min, model 6 about 7.99 min.";
+  });
+})();
+
+/* leakage */
+(function(){
+  const L=[["Honest (none)",74.69,4.44,4.38,8.80,5.85],["+ trip_min",75.02,4.16,3.77,7.95,5.17],["+ customer_rating",75.11,2.49,4.12,7.32,5.19],["+ all three leaky",75.24,2.21,3.55,6.62,4.57]];
+  btnGroup("#lkBtns",L.map(l=>l[0]),k=>{
+    bars("#lkBars",[["Cost per order",L[k][4],""],["Mean absolute error (min)",L[k][5],"b2"],["Late > 10 min %",L[k][2],""]],10,v=>v.toFixed(2));
+    $("#lkNote").textContent=k===0?"The honest baseline: cost 8.80, average error 5.85 minutes.":`Cost falls from 8.80 to ${L[k][4].toFixed(2)}${k===3?" (about a quarter) and the average error from about 5.9 to 4.6 minutes. It looks great, but these columns will not exist at prediction time.":", but this column will not exist at prediction time."}`;
+  });
+})();
+
+/* history demo */
+(function(){
+  const T=[31,28,35,40,33,38,45,36],MIN=3;
+  function draw(){
+    const k=+$("#hSl").value;$("#hVal").textContent=k;
+    $("#hSeq").innerHTML=T.map((t,i)=>`<div class="${i+1===k?'cur':i+1<k?'used':''}"><span>Order ${i+1}</span><b>${t}</b>${i+1===k?'predicting':i+1<k?'used':'unseen'}</div>`).join("");
+    const past=T.slice(0,k-1);
+    $("#hRes").innerHTML=past.length>=MIN?`Past mean from ${past.length} earlier orders = <b>${(past.reduce((a,b)=>a+b,0)/past.length).toFixed(1)} min</b>. Order ${k}'s own time (${T[k-1]}) is not used.`:`Only ${past.length} earlier order${past.length===1?'':'s'}: history is <b>missing</b> (treated as an unknown restaurant).`;
+  }
+  $("#hSl").oninput=draw;draw();
+})();
+
+/* expectation */
+bars("#expBars",[["Current rule (May)",18.19,"b2"],["Random 5-fold CV, Jan–Apr",8.61],["Train Jan–Apr, score May",8.40]],20,v=>v.toFixed(2));
+
+/* quizzes */
+const quizzes=[
+ ["q1","Knowledge check 1","If one minute of lateness costs 3 times one minute of over-promising, which promise minimises the expected cost for an order?",["The average delivery time","The median delivery time","The 75th percentile of the delivery time","The maximum delivery time ever seen"],2,"Moving the promise up by a minute saves 3 units for each order that would have been late and costs 1 unit for each order that was already early. The two balance when one quarter of orders are late, so the best promise is the 75th percentile. The average and median ignore the asymmetry, and the maximum wastes a lot of padding."],
+ ["q2","Knowledge check 2","Which set of columns is safe to use as inputs to the promise model?",["distance_km, traffic_index, riders_available_nearby, weather","distance_km, pickup_wait_min, weather","traffic_index, customer_rating, n_items","trip_min, distance_km, zone"],0,"The model must predict at the moment of ordering, so every input must exist at that moment. Distance, traffic, rider supply and weather do. <code>pickup_wait_min</code>, <code>customer_rating</code> and <code>trip_min</code> are only recorded <b>after</b> the order is on its way or delivered, so using them would be leakage. They would help in training and be missing in production."],
+ ["q3","Knowledge check 3","A teammate shuffles all orders, splits them 80/20 at random, and reports a cost of 8.6 on the 20%. Why might this be too optimistic for the real future?",["Random splits always give a lower cost than any other method, whatever the dataset is","The 20% test set is too small, so the cost estimate is far too unstable","Gradient boosting models cannot be evaluated fairly with a random train and test split","Train and test orders share the same weeks, so future changes stay hidden from the model"],3,"In production, the model predicts forward in time. A random split lets training data surround every test order (same days, same weather, same restaurant behaviour), so conditions that change over time, such as a new zone or a monsoon, are hidden. A time-based split recreates the real task. It does not always change the number a lot, but it is the only honest protocol when things change."],
+ ["q4","Knowledge check 4","Model 4 (squared error) has a lower RMSE than model 6 (quantile loss, tau = 0.75), yet model 6 has the lower cost. Why?",["RMSE treats early and late errors equally, but the business cost punishes lateness three times more","RMSE is calculated incorrectly for quantile models, so its value cannot be compared fairly","Model 6 was trained on more orders than model 4, which is what lowered its cost","The cost metric ignores the actual delivery times and only looks at the promised times"],0,"A good RMSE means predictions close to the average outcome, but the business wants promises that a majority of orders beat. Model 4's promises fall below the actual time for about 40% of orders, and lateness is expensive. Model 6 deliberately shifts its promises upward where the risk is higher. The lesson: evaluate on the metric that matches the decision."],
+ ["q5","Knowledge check 5","Adding three columns makes the validation cost 25% better. What should you do before celebrating?",["Ship the model immediately, since a 25% gain is exactly what the team was hoping for","Add even more columns from the table, since extra information should keep improving results","Check when each new column becomes known and whether it is derived from the outcome","Switch to a bigger model, because the gain shows the current model was too simple"],2,"Unusually large gains are a warning sign. Ask when each column becomes known, and whether it was computed from the target. Columns recorded after delivery, or that summarise how the delivery went, cannot be used for a promise made before it. If a column fails this check, remove it, because the improvement will not exist in production. Removing it restores an honest estimate of how the model will perform."]
+];
+quizzes.forEach(q=>{
+  const el=$("#"+q[0]);
+  el.innerHTML=`<div class="quiz"><div class="qh">${q[1]}</div><p style="margin:8px 0;font:1rem/1.6 system-ui"><b>${q[2]}</b></p><div role="radiogroup" aria-label="Answer options">`+q[3].map((c,i)=>`<label><input type="radio" name="${q[0]}" value="${i}">${c}</label>`).join("")+`</div><div class="fb" hidden></div></div>`;
+  $$("input",el).forEach(inp=>inp.onchange=()=>{
+    const v=+inp.value,fb=$(".fb",el);
+    $$("label",el).forEach((l,i)=>{l.classList.toggle("ok",i===q[4]);l.classList.toggle("no",i===v&&v!==q[4])});
+    fb.hidden=false;fb.innerHTML=(v===q[4]?"<b>Correct.</b> ":"<b>Not quite.</b> Correct answer: "+q[3][q[4]]+"<br>")+"<br>"+q[5];
+  });
+});
+
+/* takeaways */
+(function(){
+  const K=[["Start from the decision and its cost","The cost chose the loss (quantile) and the metric (cost per order)."],["Only use features available at prediction time","Treat a surprisingly large gain as a leakage alarm."],["Audit and log","Never clean silently, and never fit anything on future data."],["Split by time","Seal the test set and write the expectation down in advance."],["Beat a ladder of baselines","A model with a better RMSE can still be worse for the business."],["Build features from the past only","<code>shift(1)</code> plus <code>expanding()</code>."]];
+  $("#keys").innerHTML=K.map(k=>`<details><summary>${k[0]}</summary><div>${k[1]}</div></details>`).join("");
+})();
+
+$$("[data-tabs]").forEach(initTabs);
+</script>
+</body>
+</html>
